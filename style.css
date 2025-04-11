@@ -1,0 +1,69 @@
+body {
+    background-color: #f8f9fa; /* Light gray background */
+}
+
+h1, h2 {
+    color: #343a40; /* Dark gray headings */
+}
+
+/* Ensure columns have some minimum height and visual separation */
+#entry-section, #ranking-section {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    min-height: 70vh; /* Give some height to the columns */
+}
+
+#entry-section {
+    background-color: #ffffff; /* White background for entry */
+    border-right: 1px solid #dee2e6; /* Subtle border */
+    border-radius: 0.25rem 0 0 0.25rem; /* Rounded corners on the left */
+}
+
+#ranking-section {
+    background-color: #e9ecef; /* Slightly different background for ranking */
+    border-radius: 0 0.25rem 0.25rem 0; /* Rounded corners on the right */
+}
+
+/* Style the ranking list */
+#rankingList .list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    background-color: #ffffff; /* White list items */
+    border: 1px solid #dee2e6;
+    margin-bottom: 5px; /* Spacing between items */
+}
+
+#rankingList .list-group-item:first-child {
+    font-weight: bold; /* Highlight the top rank */
+    background-color: #d1ecf1; /* Light blue for the winner */
+    border-color: #bee5eb;
+}
+
+#rankingList .rank-badge {
+    font-size: 0.9rem;
+    font-weight: bold;
+    min-width: 25px; /* Ensure consistent width for rank number */
+    text-align: center;
+    margin-right: 15px;
+    background-color: #6c757d; /* Gray badge background */
+    color: white;
+    padding: 5px 8px;
+    border-radius: 0.25rem;
+}
+
+#rankingList .player-name {
+    flex-grow: 1; /* Allow name to take up available space */
+    margin-right: 15px;
+}
+
+#rankingList .player-time {
+    font-style: italic;
+    color: #495057; /* Slightly muted time color */
+}
+
+/* Add some margin to the action buttons */
+#exportBtn, #clearBtn {
+    margin-top: 10px;
+}
