@@ -24,7 +24,8 @@ const translations = {
         'timeMinute': 'minute',
         'timeMinutes': 'minutes',
         'timeSecond': 'second',
-        'timeSeconds': 'seconds'
+        'timeSeconds': 'seconds',
+        'confirmDelete': 'Are you sure you want to delete this score?'
     },
     'zh-Hant': {
         'title': '玩家時間排名',
@@ -50,7 +51,8 @@ const translations = {
         'timeMinute': '分鐘',
         'timeMinutes': '分鐘',
         'timeSecond': '秒',
-        'timeSeconds': '秒'
+        'timeSeconds': '秒',
+        'confirmDelete': '您確定要刪除此分數嗎？'
     }
 };
 
@@ -187,7 +189,36 @@ function updateRankingDisplay() {
 
             const timeSpan = document.createElement('span');
             timeSpan.className = 'player-time';
+            timeSpan.style.cursor = 'pointer'; // Indicate it's clickable
+            timeSpan.style.marginRight = '10px';
+            timeSpan.addEventListener('click', (event) => {
+                const originalTime = score.time;
+                const inputElement = document.createElement('input');
+                inputElement.type = 'number';
+                inputElement.value = originalTime;
+                inputElement.style.width = '50px'; // Adjust as needed
+                timeSpan.textContent = ''; // Clear the timeSpan
+                timeSpan.appendChild(inputElement);
+                inputElement.focus();
 
+                inputElement.addEventListener('blur', () => {
+                    const newTime = parseFloat(inputElement.value);
+                    if (!isNaN(newTime) && newTime >= 0) {
+                        score.time = newTime;
+                        scores.sort((a, b) => a.time - b.time);
+                        updateRankingDisplay();
+                    } else {
+                        score.time = originalTime;
+                        updateRankingDisplay();
+                    }
+                });
+
+                inputElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        inputElement.blur(); // Trigger blur event
+                    }
+                });
+            });
             const totalSeconds = score.time;
             const minutes = Math.floor(totalSeconds / 60);
             const remainingSeconds = Number((totalSeconds % 60).toFixed(3));
@@ -214,6 +245,20 @@ function updateRankingDisplay() {
             li.appendChild(nameSpan);
             li.appendChild(timeSpan);
 
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btn btn-sm delete-button';
+            deleteButton.style.backgroundColor = '#ffe4e1'; /* Very Light Pink */
+            deleteButton.style.color = 'black';
+            deleteButton.textContent = '🗑️';
+            deleteButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent row click
+                if (confirm(getTranslation('confirmDelete'))) {
+                    scores.splice(index, 1);
+                    updateRankingDisplay();
+                }
+            });
+
+            li.appendChild(deleteButton);
             rankingList.appendChild(li);
         });
     }
