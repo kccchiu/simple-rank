@@ -1,7 +1,8 @@
 // DOM Elements
 const scoreForm = document.getElementById('scoreForm');
 const playerNameInput = document.getElementById('playerName');
-const playerTimeInput = document.getElementById('playerTime');
+const playerMinutesInput = document.getElementById('playerMinutes'); // New
+const playerSecondsInput = document.getElementById('playerSeconds'); // Renamed from playerTimeInput
 const rankingList = document.getElementById('rankingList');
 const exportBtn = document.getElementById('exportBtn');
 const clearBtn = document.getElementById('clearBtn');
@@ -16,21 +17,28 @@ scoreForm.addEventListener('submit', (event) => {
     event.preventDefault(); // Prevent default form submission
 
     const playerName = playerNameInput.value.trim();
-    const playerTimeStr = playerTimeInput.value.trim();
-    const playerTime = parseFloat(playerTimeStr);
+    const playerMinutesStr = playerMinutesInput.value.trim();
+    const playerSecondsStr = playerSecondsInput.value.trim();
+
+    const playerMinutes = parseInt(playerMinutesStr, 10) || 0; // Default to 0 if empty or invalid
+    const playerSeconds = parseFloat(playerSecondsStr) || 0.0; // Default to 0.0 if empty or invalid
+
+    // Calculate total time in seconds
+    const totalTimeInSeconds = (playerMinutes * 60) + playerSeconds;
 
     // Basic Validation
     if (!playerName) {
         alert('Please enter a player name.');
         return;
     }
-    if (isNaN(playerTime) || playerTime <= 0) {
-        alert('Please enter a valid positive time in seconds.');
+    // Validate total time
+    if (totalTimeInSeconds <= 0) {
+        alert('Please enter a valid positive time (minutes and/or seconds).');
         return;
     }
 
     // Add score to the array
-    scores.push({ name: playerName, time: playerTime });
+    scores.push({ name: playerName, time: totalTimeInSeconds });
 
     // Sort scores by time (ascending - lower is better)
     scores.sort((a, b) => a.time - b.time);
@@ -40,7 +48,8 @@ scoreForm.addEventListener('submit', (event) => {
 
     // Clear input fields
     playerNameInput.value = '';
-    playerTimeInput.value = '';
+    playerMinutesInput.value = '';
+    playerSecondsInput.value = '';
     playerNameInput.focus(); // Set focus back to name input
 });
 
@@ -59,7 +68,8 @@ clearBtn.addEventListener('click', () => {
         scores = []; // Clear the data
         updateRankingDisplay(); // Update the display
         playerNameInput.value = ''; // Clear inputs
-        playerTimeInput.value = '';
+        playerMinutesInput.value = '';
+        playerSecondsInput.value = '';
     }
 });
 
@@ -95,8 +105,25 @@ function updateRankingDisplay() {
             // Player Time
             const timeSpan = document.createElement('span');
             timeSpan.className = 'player-time';
-            // Format time nicely (e.g., keep reasonable decimal places if needed)
-            timeSpan.textContent = `${Number(score.time.toFixed(3))} seconds`; // Show up to 3 decimal places
+            // Format time into minutes and seconds
+            const totalSeconds = score.time;
+            const minutes = Math.floor(totalSeconds / 60);
+            const remainingSeconds = Number((totalSeconds % 60).toFixed(3)); // Keep precision
+
+            let timeString = "";
+            if (minutes > 0) {
+                timeString += `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+            }
+            if (remainingSeconds > 0 || minutes === 0) { // Show seconds if they exist, or if minutes are 0
+                if (timeString.length > 0) {
+                    timeString += ' '; // Add space if minutes were added
+                }
+                // Avoid adding "0 seconds" if there are minutes unless it's exactly 0 total time
+                if (remainingSeconds > 0 || totalSeconds === 0) {
+                   timeString += `${remainingSeconds} second${remainingSeconds !== 1 ? 's' : ''}`;
+                }
+            }
+            timeSpan.textContent = timeString || '0 seconds'; // Fallback for edge cases if string is empty
 
             li.appendChild(rankBadge);
             li.appendChild(nameSpan);
