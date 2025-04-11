@@ -106,7 +106,7 @@ const exportBtn = document.getElementById('exportBtn');
 const clearBtn = document.getElementById('clearBtn');
 
 // Internal data store
-let scores = [];
+let scores = JSON.parse(localStorage.getItem('scores')) || [];
 
 // --- Event Listeners ---
 
@@ -155,6 +155,7 @@ exportBtn.addEventListener('click', () => {
 clearBtn.addEventListener('click', () => {
     if (confirm(getTranslation('confirmClear'))) {
         scores = [];
+        localStorage.removeItem('scores');
         updateRankingDisplay();
         playerNameInput.value = '';
         playerMinutesInput.value = '';
@@ -166,6 +167,7 @@ clearBtn.addEventListener('click', () => {
 
 // Update the ranking list display in the HTML
 function updateRankingDisplay() {
+    localStorage.setItem('scores', JSON.stringify(scores));
     rankingList.innerHTML = '';
 
     if (scores.length === 0) {
