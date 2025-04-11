@@ -76,3 +76,7 @@ h1, h2 {
 /* #exportBtn, #clearBtn { */
     /* margin-top removed as parent div has padding */
 /* } */
+
+.align-right {
+  float: right;
+}

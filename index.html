@@ -11,46 +11,56 @@
 </head>
 <body>
     <div class="container-fluid mt-4">
-        <h1 class="text-center mb-4">Player Time Ranking</h1>
+        <!-- Language Toggle Dropdown -->
+        <div class="dropdown float-end">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Language
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                <li><a class="dropdown-item" href="#" onclick="setLanguage('en')">English</a></li>
+                <li><a class="dropdown-item" href="#" onclick="setLanguage('zh-Hant')">繁體中文 (Traditional Chinese)</a></li>
+            </ul>
+        </div>
+        <h1 class="text-center mb-4" data-lang-key="title">Player Time Ranking</h1>
         <div class="row">
             <!-- Left Half: Data Entry -->
             <div class="col-md-6 border-end pe-4" id="entry-section">
-                <h2>Enter Score</h2>
+                <h2 data-lang-key="enterScoreTitle">Enter Score</h2>
                 <form id="scoreForm">
                     <div class="mb-3">
-                        <label for="playerName" class="form-label">Player Name</label>
+                        <label for="playerName" class="form-label" data-lang-key="playerNameLabel">Player Name</label>
                         <input type="text" class="form-control" id="playerName" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Time</label>
+                        <label class="form-label" data-lang-key="timeLabel">Time</label>
                         <div class="row g-2">
                             <div class="col">
                                 <label for="playerMinutes" class="form-label visually-hidden">Minutes</label>
-                                <input type="number" class="form-control" id="playerMinutes" placeholder="Minutes" min="0" step="1">
+                                <input type="number" class="form-control" id="playerMinutes" placeholder="Minutes" data-lang-key="minutesPlaceholder" min="0" step="1">
                             </div>
                             <div class="col">
                                 <label for="playerSeconds" class="form-label visually-hidden">Seconds</label>
-                                <input type="number" class="form-control" id="playerSeconds" placeholder="Seconds" min="0" max="59.999" step="any" required>
+                                <input type="number" class="form-control" id="playerSeconds" placeholder="Seconds" data-lang-key="secondsPlaceholder" min="0" max="59.999" step="any" required>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit Score</button>
+                    <button type="submit" class="btn btn-primary align-right" data-lang-key="submitButton">Submit Score</button>
                 </form>
             </div>
 
             <!-- Right Half: Ranking Display -->
             <div class="col-md-6 ps-4" id="ranking-section">
                 <div class="ranking-list-container"> <!-- New wrapper for list -->
-                    <h2>Ranking</h2>
+                    <h2 data-lang-key="rankingTitle">Ranking</h2>
                     <ul id="rankingList" class="list-group">
                         <!-- Ranking items will be added here by JavaScript -->
-                        <li class="list-group-item text-muted">No scores submitted yet.</li>
+                        <li class="list-group-item text-muted" data-lang-key="noScores">No scores submitted yet.</li>
                     </ul>
                 </div>
                 <div class="mt-3 pt-3 border-top"> <!-- Actions section moved below list, added top border/padding -->
-                    <h2>Actions</h2>
-                    <button id="exportBtn" class="btn btn-success me-2">Export Results (CSV)</button>
-                    <button id="clearBtn" class="btn btn-danger">Clear All</button>
+                    <h2 data-lang-key="actionsTitle">Actions</h2>
+                    <button id="exportBtn" class="btn btn-success me-2" data-lang-key="exportButton">Export Results (CSV)</button>
+                    <button id="clearBtn" class="btn btn-danger" data-lang-key="clearButton">Clear All</button>
                 </div>
             </div>
         </div>
