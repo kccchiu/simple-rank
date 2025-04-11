@@ -56,9 +56,8 @@ const translations = {
     }
 };
 
+// --- Translations ---
 let currentLanguage = localStorage.getItem('language') || 'zh-Hant'; // Default to Traditional Chinese
-
-// --- Helper Functions ---
 function getTranslation(key) {
     return translations[currentLanguage][key] || translations['en'][key] || key; // Fallback chain
 }
@@ -106,9 +105,9 @@ const exportBtn = document.getElementById('exportBtn');
 const clearBtn = document.getElementById('clearBtn');
 
 // Internal data store
-let scores = JSON.parse(localStorage.getItem('scores')) || [];
-
+let scores = [];
 // --- Event Listeners ---
+scores = JSON.parse(localStorage.getItem('scores')) || [];
 
 // Handle score submission
 scoreForm.addEventListener('submit', (event) => {
