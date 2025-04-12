@@ -28,7 +28,7 @@ const translations = {
         'confirmDelete': 'Are you sure you want to delete this score?'
     },
     'zh-Hant': {
-        'title': '玩家時間排名',
+        'title': '遊戲挑戰站',
         'enterScoreTitle': '輸入分數',
         'playerNameLabel': '玩家名稱',
         'timeLabel': '時間',
