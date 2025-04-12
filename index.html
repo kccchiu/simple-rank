@@ -32,7 +32,15 @@
                         <input type="text" class="form-control" id="playerName" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" data-lang-key="timeLabel">Time</label>
+                        <label class="form-label" data-lang-key="timerLabel">Timer</label>
+                        <div class="d-flex align-items-center mb-2">
+                            <span id="timerDisplay" class="fs-4 me-3">00:00.0</span>
+                            <button type="button" id="startTimerBtn" class="btn btn-success me-2" data-lang-key="startTimerButton">Start</button>
+                            <button type="button" id="stopTimerBtn" class="btn btn-warning" data-lang-key="stopTimerButton">Stop</button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-lang-key="timeLabel">Time (Manual Entry)</label>
                         <div class="row g-2">
                             <div class="col">
                                 <label for="playerMinutes" class="form-label visually-hidden">Minutes</label>

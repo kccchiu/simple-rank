@@ -80,6 +80,13 @@ h1, h2 {
     /* margin-top removed as parent div has padding */
 /* } */
 
+/* Timer specific styles */
+#timerDisplay {
+    min-width: 5ch; /* Set minimum width to accommodate MM:SS format */
+    display: inline-block; /* Ensure min-width is respected */
+    text-align: right; /* Optional: align time to the right within its space */
+}
+
 .align-right {
   float: right;
 }

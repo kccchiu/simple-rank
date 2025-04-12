@@ -25,7 +25,11 @@ const translations = {
         'timeMinutes': 'minutes',
         'timeSecond': 'second',
         'timeSeconds': 'seconds',
-        'confirmDelete': 'Are you sure you want to delete this score?'
+        'confirmDelete': 'Are you sure you want to delete this score?',
+        'timerLabel': 'Timer', // Added
+        'startTimerButton': 'Start', // Added
+        'stopTimerButton': 'Stop', // Added
+        'timeLabelManual': 'Time (Manual Entry)' // Added for clarity
     },
     'zh-Hant': {
         'title': '遊戲挑戰站',
@@ -52,7 +56,11 @@ const translations = {
         'timeMinutes': '分鐘',
         'timeSecond': '秒',
         'timeSeconds': '秒',
-        'confirmDelete': '您確定要刪除此分數嗎？'
+        'confirmDelete': '您確定要刪除此分數嗎？',
+        'timerLabel': '計時器', // Added
+        'startTimerButton': '開始', // Added
+        'stopTimerButton': '停止', // Added
+        'timeLabelManual': '時間（手動輸入）' // Added for clarity
     }
 };
 
@@ -103,6 +111,9 @@ const playerSecondsInput = document.getElementById('playerSeconds');
 const rankingList = document.getElementById('rankingList');
 const exportBtn = document.getElementById('exportBtn');
 const clearBtn = document.getElementById('clearBtn');
+const timerDisplay = document.getElementById('timerDisplay'); // Added
+const startTimerBtn = document.getElementById('startTimerBtn'); // Added
+const stopTimerBtn = document.getElementById('stopTimerBtn'); // Added
 
 // Internal data store
 let scores = [];
@@ -161,6 +172,74 @@ clearBtn.addEventListener('click', () => {
         playerSecondsInput.value = '';
     }
 });
+
+// --- Timer Variables ---
+let timerInterval = null;
+let startTime = 0;
+let elapsedTime = 0; // Store elapsed time when stopped
+
+// --- Timer Functions ---
+
+// Format time in MM:SS.T
+function formatTime(milliseconds) {
+    const totalSecondsFloat = milliseconds / 1000;
+    const minutes = Math.floor(totalSecondsFloat / 60);
+    const remainingSeconds = totalSecondsFloat % 60;
+    const seconds = Math.floor(remainingSeconds);
+    const tenths = Math.floor((remainingSeconds - seconds) * 10);
+
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${tenths}`;
+}
+
+// Start the timer
+function startTimer() {
+    if (timerInterval) return; // Prevent multiple intervals
+
+    startTime = Date.now() - elapsedTime; // Adjust start time if resuming
+    timerInterval = setInterval(() => {
+        const now = Date.now();
+        const currentElapsedTime = now - startTime;
+        // Update display only if the formatted time actually changes (prevents unnecessary DOM updates)
+        const formatted = formatTime(currentElapsedTime);
+        if (timerDisplay.textContent !== formatted) {
+            timerDisplay.textContent = formatted;
+        }
+    }, 100); // Update display check every 100ms
+
+    startTimerBtn.disabled = true;
+    stopTimerBtn.disabled = false;
+}
+
+// Stop the timer
+function stopTimer() {
+    if (!timerInterval) return; // Only stop if running
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+    elapsedTime = Date.now() - startTime; // Record final elapsed time
+    timerDisplay.textContent = formatTime(elapsedTime); // Display final time
+
+    // Populate the minute and second fields
+    const totalSecondsRaw = elapsedTime / 1000;
+    const minutes = Math.floor(totalSecondsRaw / 60);
+    // Keep tenths of a second for the input field
+    const secondsWithTenths = (totalSecondsRaw % 60).toFixed(1);
+
+    playerMinutesInput.value = minutes;
+    playerSecondsInput.value = secondsWithTenths;
+
+    startTimerBtn.disabled = false;
+    stopTimerBtn.disabled = true;
+
+    // Reset elapsedTime for the next run if needed, or keep it to allow resume?
+    // For now, let's reset it so Start always begins from 0 after a Stop.
+    // If resume functionality is desired, remove the line below.
+    elapsedTime = 0;
+}
+
+// --- Event Listeners (Timer) ---
+startTimerBtn.addEventListener('click', startTimer);
+stopTimerBtn.addEventListener('click', stopTimer);
 
 // --- Functions ---
 
@@ -222,7 +301,7 @@ function updateRankingDisplay() {
             });
             const totalSeconds = score.time;
             const minutes = Math.floor(totalSeconds / 60);
-            const remainingSeconds = Number((totalSeconds % 60).toFixed(3));
+            const remainingSeconds = Number((totalSeconds % 60).toFixed(1)); // Show tenths
 
             let timeString = "";
             if (minutes > 0) {
@@ -233,10 +312,12 @@ function updateRankingDisplay() {
                 if (timeString.length > 0) {
                     timeString += ' ';
                 }
-                 const secondText = remainingSeconds === 1 ? getTranslation('timeSecond') : getTranslation('timeSeconds');
+                 // Adjust for singular/plural based on whole seconds, but display with tenths
+                 const wholeSeconds = Math.floor(remainingSeconds);
+                 const secondText = (wholeSeconds === 1 && remainingSeconds < 2) ? getTranslation('timeSecond') : getTranslation('timeSeconds');
                  // Only add seconds part if > 0 or if total time is exactly 0
                  if (remainingSeconds > 0 || totalSeconds === 0) {
-                    timeString += `${remainingSeconds} ${secondText}`;
+                    timeString += `${remainingSeconds.toFixed(1)} ${secondText}`; // Display with tenths
                  }
             }
             // Fallback for exactly 0 seconds if logic above didn't catch it
@@ -297,5 +378,6 @@ function exportToCSV() {
 // --- Initial Setup ---
 // Apply the initial language settings on page load
 document.addEventListener('DOMContentLoaded', () => {
-    setLanguage(currentLanguage);
+    setLanguage(currentLanguage); // Apply translations first
+    stopTimerBtn.disabled = true; // Initially disable stop button
 });
