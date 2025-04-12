@@ -146,6 +146,8 @@ scoreForm.addEventListener('submit', (event) => {
     scores.sort((a, b) => a.time - b.time);
     updateRankingDisplay();
     showConfetti(); // Add confetti effect
+    const clapSound = new Audio('clapping.m4a'); // Create audio object
+    clapSound.play(); // Play the sound
 
     playerNameInput.value = '';
     playerMinutesInput.value = '';
