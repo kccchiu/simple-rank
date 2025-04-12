@@ -222,11 +222,11 @@ function stopTimer() {
     // Populate the minute and second fields
     const totalSecondsRaw = elapsedTime / 1000;
     const minutes = Math.floor(totalSecondsRaw / 60);
-    // Keep tenths of a second for the input field
-    const secondsWithTenths = (totalSecondsRaw % 60).toFixed(1);
+    // Round seconds to the nearest whole number for the input field
+    const secondsRounded = Math.round(totalSecondsRaw % 60);
 
     playerMinutesInput.value = minutes;
-    playerSecondsInput.value = secondsWithTenths;
+    playerSecondsInput.value = secondsRounded;
 
     startTimerBtn.disabled = false;
     stopTimerBtn.disabled = true;
@@ -255,13 +255,24 @@ function updateRankingDisplay() {
         li.textContent = getTranslation('noScores'); // Set initial text
         rankingList.appendChild(li);
     } else {
+        let lastTime = -1; // Initialize with a value that won't match any real time
+        let actualRank = 0;
         scores.forEach((score, index) => {
             const li = document.createElement('li');
             li.className = 'list-group-item';
 
             const rankBadge = document.createElement('span');
             rankBadge.className = 'rank-badge';
-            rankBadge.textContent = index + 1;
+
+            // Determine rank based on time, handling ties
+            // Compare times rounded to one decimal place to match display precision
+            if (index === 0 || score.time.toFixed(1) !== scores[index - 1].time.toFixed(1)) {
+                actualRank = index + 1; // Update rank only if time is different
+                rankBadge.textContent = actualRank;
+            } else {
+                // It's a tie with the previous score
+                rankBadge.textContent = '-'; // Display '-' for subsequent ties
+            }
 
             const nameSpan = document.createElement('span');
             nameSpan.className = 'player-name';
@@ -350,9 +361,14 @@ function updateRankingDisplay() {
 function exportToCSV() {
     // Use translated headers
     const csvHeader = `${getTranslation('csvHeaderRank')},${getTranslation('csvHeaderName')},${getTranslation('csvHeaderTime')}\n`;
+    let csvActualRank = 0;
     const csvRows = scores.map((score, index) => {
+        // Determine actual numerical rank for CSV, handling ties (e.g., 1, 1, 3)
+        if (index === 0 || score.time !== scores[index - 1].time) {
+            csvActualRank = index + 1;
+        }
         const name = score.name.includes(',') ? `"${score.name}"` : score.name;
-        return `${index + 1},${name},${score.time}`;
+        return `${csvActualRank},${name},${score.time}`;
     }).join("\n");
 
     const csvContent = csvHeader + csvRows;
