@@ -113,7 +113,7 @@ const exportBtn = document.getElementById('exportBtn');
 const clearBtn = document.getElementById('clearBtn');
 const timerDisplay = document.getElementById('timerDisplay'); // Added
 const startTimerBtn = document.getElementById('startTimerBtn'); // Added
-const stopTimerBtn = document.getElementById('stopTimerBtn'); // Added
+// const stopTimerBtn = document.getElementById('stopTimerBtn'); // Removed
 
 // Internal data store
 let scores = [];
@@ -145,6 +145,7 @@ scoreForm.addEventListener('submit', (event) => {
     scores.push({ name: playerName, time: totalTimeInSeconds });
     scores.sort((a, b) => a.time - b.time);
     updateRankingDisplay();
+    showConfetti(); // Add confetti effect
 
     playerNameInput.value = '';
     playerMinutesInput.value = '';
@@ -206,8 +207,12 @@ function startTimer() {
         }
     }, 100); // Update display check every 100ms
 
-    startTimerBtn.disabled = true;
-    stopTimerBtn.disabled = false;
+    // Update button text and state
+    startTimerBtn.textContent = getTranslation('stopTimerButton');
+    startTimerBtn.classList.remove('btn-success');
+    startTimerBtn.classList.add('btn-warning');
+    // startTimerBtn.disabled = true; // Removed
+    // stopTimerBtn.disabled = false; // Removed
 }
 
 // Stop the timer
@@ -222,14 +227,21 @@ function stopTimer() {
     // Populate the minute and second fields
     const totalSecondsRaw = elapsedTime / 1000;
     const minutes = Math.floor(totalSecondsRaw / 60);
-    // Round seconds to the nearest whole number for the input field
-    const secondsRounded = Math.round(totalSecondsRaw % 60);
+    // Calculate seconds and tenths using truncation, matching formatTime
+    const remainingSecondsFloat = totalSecondsRaw % 60;
+    const seconds = Math.floor(remainingSecondsFloat);
+    const tenths = Math.floor((remainingSecondsFloat - seconds) * 10);
+    const secondsForInput = `${seconds}.${tenths}`; // Combine seconds and tenths
 
     playerMinutesInput.value = minutes;
-    playerSecondsInput.value = secondsRounded;
+    playerSecondsInput.value = secondsForInput;
 
-    startTimerBtn.disabled = false;
-    stopTimerBtn.disabled = true;
+    // Update button text and state
+    startTimerBtn.textContent = getTranslation('startTimerButton');
+    startTimerBtn.classList.remove('btn-warning');
+    startTimerBtn.classList.add('btn-success');
+    // startTimerBtn.disabled = false; // Removed
+    // stopTimerBtn.disabled = true; // Removed
 
     // Reset elapsedTime for the next run if needed, or keep it to allow resume?
     // For now, let's reset it so Start always begins from 0 after a Stop.
@@ -237,9 +249,18 @@ function stopTimer() {
     elapsedTime = 0;
 }
 
-// --- Event Listeners (Timer) ---
-startTimerBtn.addEventListener('click', startTimer);
-stopTimerBtn.addEventListener('click', stopTimer);
+// --- Event Listener (Timer Toggle) ---
+function handleTimerToggle() {
+    if (timerInterval) { // If timer is running, stop it
+        stopTimer();
+    } else { // If timer is stopped, start it
+        startTimer();
+        elapsedTime = 0; // Reset elapsed time when starting from stopped state
+    }
+}
+
+startTimerBtn.addEventListener('click', handleTimerToggle);
+// stopTimerBtn.addEventListener('click', stopTimer); // Removed
 
 // --- Functions ---
 
@@ -391,9 +412,37 @@ function exportToCSV() {
     }
 }
 
+// --- Confetti Function ---
+function showConfetti() {
+    const confettiContainer = document.createElement('div');
+    confettiContainer.id = 'confetti-container'; // Add ID for styling
+    document.body.appendChild(confettiContainer);
+
+    const gifSrc = 'conf.gif'; // Path to your GIF
+    const gifWidth = 100; // Approximate width of your GIF in pixels, adjust if needed
+    const screenWidth = window.innerWidth;
+    const numGifs = Math.ceil(screenWidth / gifWidth);
+
+    for (let i = 0; i < numGifs; i++) {
+        const img = document.createElement('img');
+        img.src = gifSrc;
+        img.alt = 'Confetti';
+        img.style.width = `${gifWidth}px`; // Set width explicitly if needed
+        img.style.height = 'auto';
+        confettiContainer.appendChild(img);
+    }
+
+    // Remove confetti after a few seconds
+    setTimeout(() => {
+        confettiContainer.remove();
+    }, 3000); // Adjust duration as needed (3000ms = 3 seconds)
+}
+
+
 // --- Initial Setup ---
 // Apply the initial language settings on page load
 document.addEventListener('DOMContentLoaded', () => {
     setLanguage(currentLanguage); // Apply translations first
-    stopTimerBtn.disabled = true; // Initially disable stop button
+    // stopTimerBtn.disabled = true; // Removed - No longer needed
+    // Ensure start button text is correct initially (handled by setLanguage)
 });

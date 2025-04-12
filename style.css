@@ -82,11 +82,31 @@ h1, h2 {
 
 /* Timer specific styles */
 #timerDisplay {
-    min-width: 5ch; /* Set minimum width to accommodate MM:SS format */
+    min-width: 8ch; /* Adjusted min-width for MM:SS.T */
     display: inline-block; /* Ensure min-width is respected */
     text-align: right; /* Optional: align time to the right within its space */
+    font-family: 'Courier New', Courier, monospace; /* Use monospaced font */
 }
 
 .align-right {
   float: right;
+}
+
+/* Confetti styles */
+#confetti-container {
+    position: fixed; /* Position relative to the viewport */
+    top: 0;
+    left: 0;
+    width: 100%; /* Span the full width */
+    height: auto; /* Adjust height based on content */
+    display: flex; /* Arrange images horizontally */
+    flex-wrap: nowrap; /* Prevent wrapping */
+    overflow: hidden; /* Hide any overflow if images don't fit perfectly */
+    z-index: 1050; /* Ensure it's above most other elements (Bootstrap modals are ~1040) */
+    pointer-events: none; /* Allow clicks to pass through */
+}
+
+#confetti-container img {
+    height: 100px; /* Example height, adjust as needed */
+    width: auto; /* Maintain aspect ratio */
 }
