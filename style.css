@@ -1,5 +1,8 @@
 body {
-    background-color: #f8f9fa; /* Light gray background */
+    background-color: rgba(248, 249, 250, 0.3); /* Light gray background with opacity */
+    background-image: url('easter.jpeg');
+    background-size: cover; /* Cover the entire background */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
 }
 
 h1, h2 {
@@ -14,13 +17,13 @@ h1, h2 {
 }
 
 #entry-section {
-    background-color: #ffffff; /* White background for entry */
+    background-color: rgba(255, 255, 255, 0.5); /* White background for entry with opacity */
     border-right: 1px solid #dee2e6; /* Subtle border */
     border-radius: 0.25rem 0 0 0.25rem; /* Rounded corners on the left */
 }
 
 #ranking-section {
-    background-color: #e9ecef; /* Slightly different background for ranking */
+    background-color: rgba(233, 236, 239, 0.5); /* Slightly different background for ranking with opacity */
     border-radius: 0 0.25rem 0.25rem 0; /* Rounded corners on the right */
     display: flex; /* Use flexbox for layout */
     flex-direction: column; /* Stack children vertically */
